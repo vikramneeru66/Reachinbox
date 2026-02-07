@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  avatar        String?
+  googleId      String    @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  emailAccounts EmailAccount[]
+  campaigns     Campaign[]
+}
+
+model EmailAccount {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String
+  host         String
+  port         Int
+  user_auth    String
+  pass_auth    String
+  hourlyLimit  Int      @default(50)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  sentEmails   SentEmail[]
+}
+
+model Campaign {
+  id           String   @id @default(cuid())
+  name         String
+  subject      String
+  body         String
+  startTime    DateTime
+  delay        Int      @default(0)
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String
+  status       String   @default("SCHEDULED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  emails       EmailJob[]
+}
+
+model EmailJob {
+  id           String   @id @default(cuid())
+  recipient    String
+  campaign     Campaign @relation(fields: [campaignId], references: [id])
+  campaignId   String
+  status       String   @default("PENDING")
+  isStarred    Boolean  @default(false)
+  isArchived   Boolean  @default(false)
+  scheduledTime DateTime
+  sentAt       DateTime?
+  error        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SentEmail {
+  id             String       @id @default(cuid())
+  emailAccount   EmailAccount @relation(fields: [emailAccountId], references: [id])
+  emailAccountId String
+  recipient      String
+  subject        String
+  sentAt         DateTime     @default(now())
+}

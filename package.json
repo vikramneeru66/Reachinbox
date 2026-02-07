@@ -1,0 +1,16 @@
+{
+  "name": "reachinbox-fullstack",
+  "version": "1.0.0",
+  "description": "Email Scheduler Fullstack Application",
+  "scripts": {
+    "install:all": "npm install && cd backend && npm install && cd frontend && npm install",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "db:migrate": "cd backend && npx prisma migrate dev",
+    "db:generate": "cd backend && npx prisma generate"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
